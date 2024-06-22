@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import clsx from 'clsx';
 
 import { ArrowButton } from 'components/arrow-button';
@@ -29,25 +29,11 @@ type ArticleParamsFormProps = {
 	onFormSubmit: (data: ArticleStateType) => void;
 };
 
-export const ArticleParamsForm = ({
-	open,
-	setOpen,
-	onFormSubmit,
-}: ArticleParamsFormProps) => {
+export const ArticleParamsForm = (props: ArticleParamsFormProps) => {
 	const [formState, setFormState] =
 		useState<ArticleStateType>(defaultArticleState);
-	const formRef = useRef<HTMLDivElement>(null);
 
-	useEffect(() => {
-		if (!open) return;
-		const handleClickOutside = (event: MouseEvent) => {
-			if (formRef.current && !formRef.current.contains(event.target as Node)) {
-				setOpen(false);
-			}
-		};
-		document.addEventListener('mousedown', handleClickOutside);
-		return () => document.removeEventListener('mousedown', handleClickOutside);
-	}, [open, setOpen]);
+	const formRef = useRef<HTMLDivElement>(null);
 
 	const handleInputChange = (
 		propertyName: string,
@@ -60,16 +46,20 @@ export const ArticleParamsForm = ({
 	};
 
 	const handleFormSubmit = (data: ArticleStateType) => {
-		onFormSubmit(data);
-		setOpen(false);
+		props.onFormSubmit(data);
+		props.setOpen(false);
 	};
 
 	return (
 		<>
-			<ArrowButton closeOnClick={open} onClick={() => setOpen(!open)} />
+			<ArrowButton
+				closeOnClick={props.open}
+				onClick={() => props.setOpen(!props.open)}
+			/>
+
 			<aside
 				ref={formRef}
-				className={clsx(styles.container, open && styles.container_open)}
+				className={clsx(styles.container, props.open && styles.container_open)}
 				onClick={(e) => e.stopPropagation()}>
 				<form className={styles.form}>
 					<Text size={31} weight={800} uppercase>
@@ -130,6 +120,7 @@ export const ArticleParamsForm = ({
 							type='reset'
 							onClick={() => handleFormSubmit(defaultArticleState)}
 						/>
+
 						<Button
 							title='Применить'
 							type='button'
