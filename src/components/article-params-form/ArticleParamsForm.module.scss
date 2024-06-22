@@ -11,6 +11,19 @@
 .container_open {
 	overflow-x: hidden;
 	transform: translate(0);
+
+	&::-webkit-scrollbar {
+		width: 9px;
+	}
+
+	&::-webkit-scrollbar-track {
+		background: rgb(240 240 240);
+	}
+
+	&::-webkit-scrollbar-thumb {
+		background: #c4c4c4;
+		border-radius: 4px;
+	}
 }
 
 .form {
