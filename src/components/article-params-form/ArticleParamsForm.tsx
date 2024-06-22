@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import clsx from 'clsx';
 
 import { ArrowButton } from 'components/arrow-button';
@@ -26,20 +26,28 @@ export type SetOpen = (value: boolean) => void;
 type ArticleParamsFormProps = {
 	open: boolean;
 	setOpen: SetOpen;
+	onFormSubmit: (data: ArticleStateType) => void;
 };
 
-export const ArticleParamsForm = (props: ArticleParamsFormProps) => {
-	const formClickHandler = (evt: React.MouseEvent) => {
-		evt.stopPropagation();
-	};
-
-	const toggleOpen = () => {
-		props.setOpen(!props.open);
-	};
-
-	// Используем хук useState для управления состоянием формы
+export const ArticleParamsForm = ({
+	open,
+	setOpen,
+	onFormSubmit,
+}: ArticleParamsFormProps) => {
 	const [formState, setFormState] =
 		useState<ArticleStateType>(defaultArticleState);
+	const formRef = useRef<HTMLDivElement>(null);
+
+	useEffect(() => {
+		if (!open) return;
+		const handleClickOutside = (event: MouseEvent) => {
+			if (formRef.current && !formRef.current.contains(event.target as Node)) {
+				setOpen(false);
+			}
+		};
+		document.addEventListener('mousedown', handleClickOutside);
+		return () => document.removeEventListener('mousedown', handleClickOutside);
+	}, [open, setOpen]);
 
 	const handleInputChange = (
 		propertyName: string,
@@ -51,12 +59,18 @@ export const ArticleParamsForm = (props: ArticleParamsFormProps) => {
 		}));
 	};
 
+	const handleFormSubmit = (data: ArticleStateType) => {
+		onFormSubmit(data);
+		setOpen(false);
+	};
+
 	return (
 		<>
-			<ArrowButton willCloseOnClick={props.open} onClick={toggleOpen} />
+			<ArrowButton closeOnClick={open} onClick={() => setOpen(!open)} />
 			<aside
-				className={clsx(styles.container, props.open && styles.container_open)}
-				onClick={formClickHandler}>
+				ref={formRef}
+				className={clsx(styles.container, open && styles.container_open)}
+				onClick={(e) => e.stopPropagation()}>
 				<form className={styles.form}>
 					<Text size={31} weight={800} uppercase>
 						Задайте параметры
@@ -111,8 +125,16 @@ export const ArticleParamsForm = (props: ArticleParamsFormProps) => {
 					/>
 
 					<div className={styles.bottomContainer}>
-						<Button title='Сбросить' type='reset' />
-						<Button title='Применить' type='submit' />
+						<Button
+							title='Сбросить'
+							type='reset'
+							onClick={() => handleFormSubmit(defaultArticleState)}
+						/>
+						<Button
+							title='Применить'
+							type='button'
+							onClick={() => handleFormSubmit(formState)}
+						/>
 					</div>
 				</form>
 			</aside>

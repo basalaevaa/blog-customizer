@@ -7,8 +7,8 @@ import clsx from 'clsx';
 export type OnClick = () => void;
 
 type ArrowButtonProps = {
-	willCloseOnClick: boolean;
 	onClick: OnClick;
+	closeOnClick: boolean;
 };
 
 export const ArrowButton = (props: ArrowButtonProps) => {
@@ -20,16 +20,13 @@ export const ArrowButton = (props: ArrowButtonProps) => {
 			tabIndex={0}
 			className={clsx(
 				styles.container,
-				props.willCloseOnClick && styles.container_open
+				props.closeOnClick && styles.container_open
 			)}
 			onClick={props.onClick}>
 			<img
 				src={arrow}
 				alt='иконка стрелочки'
-				className={clsx(
-					styles.arrow,
-					props.willCloseOnClick && styles.arrow_open
-				)}
+				className={clsx(styles.arrow, props.closeOnClick && styles.arrow_open)}
 			/>
 		</div>
 	);
