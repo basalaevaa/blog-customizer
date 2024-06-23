@@ -15,12 +15,14 @@ const domNode = document.getElementById('root') as HTMLDivElement;
 const root = createRoot(domNode);
 
 const App = () => {
+	
 	const [formOpened, setFormOpened] = useState(false);
 	const [articleState, setArticleState] = useState(defaultArticleState);
 
 	return (
 		<div
 			className={styles.main}
+			
 			style={
 				{
 					'--font-family': articleState.fontFamilyOption.value,
@@ -30,12 +32,14 @@ const App = () => {
 					'--bg-color': articleState.backgroundColor.value,
 				} as CSSProperties
 			}
+			
 			onClick={(ev: React.MouseEvent) => {
 				if (formOpened) {
 					setFormOpened(false);
 					ev.stopPropagation();
 				}
 			}}>
+			
 			<ArticleParamsForm
 				open={formOpened}
 				setOpen={setFormOpened}
