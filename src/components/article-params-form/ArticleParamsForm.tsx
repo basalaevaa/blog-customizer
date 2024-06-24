@@ -118,7 +118,10 @@ export const ArticleParamsForm = (props: ArticleParamsFormProps) => {
 						<Button
 							title='Сбросить'
 							type='reset'
-							onClick={() => handleFormSubmit(defaultArticleState)}
+							onClick={() => {
+								setFormState(defaultArticleState);
+								handleFormSubmit(defaultArticleState);
+							}}
 						/>
 
 						<Button
