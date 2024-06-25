@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, FormEvent } from 'react';
 import clsx from 'clsx';
 
 import { ArrowButton } from 'components/arrow-button';
@@ -21,15 +21,12 @@ import {
 
 import styles from './ArticleParamsForm.module.scss';
 
-export type SetOpen = (value: boolean) => void;
-
 type ArticleParamsFormProps = {
-	open: boolean;
-	setOpen: SetOpen;
 	onFormSubmit: (data: ArticleStateType) => void;
 };
 
 export const ArticleParamsForm = (props: ArticleParamsFormProps) => {
+	const [formOpened, setFormOpened] = useState(false);
 	const [formState, setFormState] =
 		useState<ArticleStateType>(defaultArticleState);
 
@@ -45,23 +42,24 @@ export const ArticleParamsForm = (props: ArticleParamsFormProps) => {
 		}));
 	};
 
-	const handleFormSubmit = (data: ArticleStateType) => {
-		props.onFormSubmit(data);
-		props.setOpen(false);
+	const handleFormSubmit = (e: FormEvent) => {
+		e.preventDefault();
+		props.onFormSubmit(formState);
+		setFormOpened(false);
 	};
 
 	return (
 		<>
 			<ArrowButton
-				closeOnClick={props.open}
-				onClick={() => props.setOpen(!props.open)}
+				closeOnClick={formOpened}
+				onClick={() => setFormOpened(!formOpened)}
 			/>
 
 			<aside
 				ref={formRef}
-				className={clsx(styles.container, props.open && styles.container_open)}
+				className={clsx(styles.container, formOpened && styles.container_open)}
 				onClick={(e) => e.stopPropagation()}>
-				<form className={styles.form}>
+				<form className={styles.form} onSubmit={handleFormSubmit}>
 					<Text size={31} weight={800} uppercase>
 						Задайте параметры
 					</Text>
@@ -120,15 +118,12 @@ export const ArticleParamsForm = (props: ArticleParamsFormProps) => {
 							type='reset'
 							onClick={() => {
 								setFormState(defaultArticleState);
-								handleFormSubmit(defaultArticleState);
+								props.onFormSubmit(defaultArticleState);
+								setFormOpened(false);
 							}}
 						/>
 
-						<Button
-							title='Применить'
-							type='button'
-							onClick={() => handleFormSubmit(formState)}
-						/>
+						<Button title='Применить' type='submit' />
 					</div>
 				</form>
 			</aside>
